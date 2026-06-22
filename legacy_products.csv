@@ -1,0 +1,11 @@
+sku,name,description,category,brand,price,compare_at_price,currency,size,color,image_url,stock,weight_grams,hsn_code,tax_percent,country_of_origin
+SKU001,Classic Cotton Tee,Comfortable everyday t-shirt,Apparel,UrbanEdge,599,799,INR,M,White,https://cdn.example.com/images/sku001.jpg,50,200,61091000,5,India
+SKU002,Slim Fit Chinos,Stretch chinos for all occasions,Apparel,UrbanEdge,1299,1699,INR,32,Khaki,https://cdn.example.com/images/sku002.jpg,30,450,62034200,5,India
+SKU001,Classic Cotton Tee,Comfortable everyday t-shirt,Apparel,UrbanEdge,599,799,INR,L,White,https://cdn.example.com/images/sku001_l.jpg,20,200,61091000,5,India
+SKU003,Running Shorts,,Sports,UrbanEdge,799,999,INR,S,Black,https://cdn.example.com/images/sku003.jpg,100,180,61034200,5,India
+SKU004,Leather Wallet,Genuine leather bifold wallet,Accessories,UrbanEdge,-50,500,INR,One Size,Brown,https://cdn.example.com/images/sku004.jpg,75,120,42023100,18,India
+SKU005,Canvas Sneakers,Casual canvas sneakers,Footwear,UrbanEdge,1499,1999,INR,7,Navy,BROKEN_IMAGE_URL_NOT_VALID,40,600,64039900,5,India
+SKU006,Hoodie Pullover,Warm fleece hoodie,Apparel,UrbanEdge,1899,2499,INR,XL,Grey,https://cdn.example.com/images/sku006.jpg,25,550,61101200,5,India
+SKU007,Baseball Cap,Adjustable snapback cap,Accessories,UrbanEdge,499,699,INR,One Size,Black,https://cdn.example.com/images/sku007.jpg,60,150,65059900,5,India
+SKU008,Denim Jacket,Classic blue denim jacket,Apparel,UrbanEdge,2999,3999,INR,M,Blue,https://cdn.example.com/images/sku008.jpg,15,800,62013100,5,India
+SKU009,Sports Socks Pack,Pack of 3 ankle socks,Apparel,UrbanEdge,299,399,INR,Free Size,Multicolor,https://cdn.example.com/images/sku009.jpg,200,100,61159200,5,India

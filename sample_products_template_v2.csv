@@ -1,0 +1,9 @@
+sku,name,description,category,brand,price,compare_at_price,currency,size,color,image_url,stock,weight_grams,hsn_code,tax_percent,country_of_origin
+SKU201,Essential Crew Neck Tee,Soft crew neck t-shirt for daily wear,Apparel,UrbanEdge,649,849,INR,M,Black,https://cdn.example.com/images/sku201.jpg,45,210,61091000,5,India
+SKU202,Tapered Casual Trousers,Smart tapered trousers with stretch fabric,Apparel,UrbanEdge,1399,1799,INR,34,Olive,https://cdn.example.com/images/sku202.jpg,28,470,62034200,5,India
+SKU203,Active Training Shorts,Breathable shorts for running and gym sessions,Sportswear,UrbanEdge,899,1099,INR,L,Navy,https://cdn.example.com/images/sku203.jpg,55,190,61034300,5,India
+SKU204,Zip Front Sweat Hoodie,Midweight hoodie with full front zip,Apparel,UrbanEdge,2099,2599,INR,XL,Gray,https://cdn.example.com/images/sku204.jpg,18,600,61102000,5,India
+SKU205,Structured Sports Cap,Lightweight cap with adjustable back strap,Accessories,UrbanEdge,549,749,INR,One Size,Red,https://cdn.example.com/images/sku205.jpg,70,140,65050090,5,India
+SKU206,Indigo Denim Overshirt,Relaxed denim overshirt with button closure,Apparel,UrbanEdge,3199,3999,INR,L,Blue,https://cdn.example.com/images/sku206.jpg,12,850,62013000,5,India
+SKU207,Cushion Comfort Socks Pack,Pack of cushioned ankle socks for all-day use,Apparel,UrbanEdge,349,449,INR,Free Size,White,https://cdn.example.com/images/sku207.jpg,160,110,61159600,5,India
+SKU208,Utility Canvas Tote,Durable canvas tote bag with inner pocket,Accessories,UrbanEdge,799,999,INR,One Size,Beige,https://cdn.example.com/images/sku208.jpg,36,280,42029298,5,India

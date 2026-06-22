@@ -1,0 +1,9 @@
+sku,name,description,category,brand,price,compare_at_price,currency,size,color,image_url,stock,weight_grams,hsn_code,tax_percent,country_of_origin
+SKU101,Classic Cotton Tee,Comfortable cotton t-shirt for everyday wear,Apparel,UrbanEdge,599,799,INR,M,White,https://cdn.example.com/images/sku101.jpg,50,200,61091000,5,India
+SKU102,Slim Fit Chinos,Stretch chinos with tapered fit,Apparel,UrbanEdge,1299,1699,INR,32,Khaki,https://cdn.example.com/images/sku102.jpg,30,450,62034200,5,India
+SKU103,Running Shorts,Lightweight shorts for daily training,Sportswear,UrbanEdge,799,999,INR,S,Black,https://cdn.example.com/images/sku103.jpg,60,180,61034300,5,India
+SKU104,Hoodie Pullover,Warm fleece hoodie for casual wear,Apparel,UrbanEdge,1899,2499,INR,XL,Gray,https://cdn.example.com/images/sku104.jpg,25,550,61101200,5,India
+SKU105,Baseball Cap,Adjustable cap with curved brim,Accessories,UrbanEdge,499,699,INR,One Size,Black,https://cdn.example.com/images/sku105.jpg,60,150,65050090,5,India
+SKU106,Denim Jacket,Classic denim jacket with front pockets,Apparel,UrbanEdge,2999,3999,INR,M,Blue,https://cdn.example.com/images/sku106.jpg,15,800,62013000,5,India
+SKU107,Sports Socks Pack,Pack of three ankle-length socks,Apparel,UrbanEdge,299,399,INR,Free Size,Multicolor,https://cdn.example.com/images/sku107.jpg,200,100,61159600,5,India
+SKU108,Canvas Tote Bag,Reusable canvas tote bag for daily use,Accessories,UrbanEdge,699,899,INR,One Size,Natural,https://cdn.example.com/images/sku108.jpg,40,250,42029298,5,India

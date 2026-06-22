@@ -1,0 +1,46 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+config.local.php
+config.php
+token_debug.txt
+*_debug.txt
+
+# Runtime uploads and generated files
+uploads/
+screenshots/*.png
+screenshots/*.jpg
+screenshots/*.jpeg
+screenshots/*.webp
+screenshots/*.gif
+!screenshots/README.txt
+
+# Archives and temporary exports
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+*_tmp.*
+*.tmp
+*.bak
+CatalogPlatformModel.js
+CatalogPlatformModel_tmp.js
+
+# Logs and cache
+*.log
+logs/
+cache/
+storage/logs/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# Dependency directories
+node_modules/
+vendor/

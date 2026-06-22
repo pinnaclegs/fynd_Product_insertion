@@ -1,0 +1,1405 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meridian Lifestyle Store OS Implementation Plan</title>
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #5c6873;
+      --line: #d8dee4;
+      --soft: #f5f7f9;
+      --accent: #0f766e;
+      --accent-2: #b45309;
+      --accent-3: #2563eb;
+      --danger: #b91c1c;
+      --ok: #15803d;
+      --paper: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    :target {
+      scroll-margin-top: 20px;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #e9edf1;
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .doc-shell {
+      width: min(1380px, calc(100% - 32px));
+      margin: 24px auto;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .side-nav {
+      position: sticky;
+      top: 20px;
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper);
+      box-shadow: 0 12px 36px rgba(23, 32, 38, 0.08);
+      padding: 18px;
+    }
+
+    .side-nav-title {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .side-nav-subtitle {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .print-only {
+      display: none;
+    }
+
+    .side-nav a {
+      display: block;
+      border-radius: 7px;
+      padding: 8px 9px;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .side-nav a:hover {
+      background: #edfafa;
+      color: var(--accent);
+    }
+
+    .side-nav .sub-link {
+      margin-left: 8px;
+      padding: 6px 9px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .side-nav .nav-group {
+      border-top: 1px solid var(--line);
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+
+    .page {
+      background: var(--paper);
+      box-shadow: 0 18px 50px rgba(23, 32, 38, 0.12);
+      min-width: 0;
+    }
+
+    .cover {
+      min-height: 460px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(37, 99, 235, 0.06)),
+        #fff;
+    }
+
+    .cover-copy {
+      padding: 64px 56px;
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 42px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 620px;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 36px;
+    }
+
+    .meta-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .meta-item strong {
+      display: block;
+      font-size: 16px;
+    }
+
+    .meta-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .cover-visual {
+      padding: 48px 44px 48px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .section {
+      padding: 34px 56px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: var(--soft);
+      min-height: 132px;
+    }
+
+    .summary-card b {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .summary-card span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 20px;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #eef3f7;
+      color: #26323c;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    td {
+      background: #fff;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .note {
+      border-left: 4px solid var(--accent);
+      padding: 12px 14px;
+      background: #edfafa;
+      color: #164e4a;
+      margin: 14px 0;
+    }
+
+    .risk {
+      border-left-color: var(--accent-2);
+      background: #fff7ed;
+      color: #7c2d12;
+    }
+
+    .critical {
+      border-left-color: var(--danger);
+      background: #fef2f2;
+      color: #7f1d1d;
+    }
+
+    .calc {
+      background: #101820;
+      color: #f8fafc;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 14px 0 18px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+      overflow-x: auto;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 18px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .message {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      background: #fbfcfd;
+      margin-top: 12px;
+    }
+
+    .message .label {
+      color: var(--accent-3);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .diagram {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      margin: 14px 0 18px;
+      overflow-x: auto;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .footer {
+      padding: 22px 56px 30px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .doc-shell {
+        width: 100%;
+        margin: 0;
+        display: block;
+      }
+
+      .page {
+        width: 100%;
+        margin: 0;
+        box-shadow: none;
+      }
+
+      .side-nav {
+        position: static;
+        max-height: none;
+        overflow: visible;
+        box-shadow: none;
+        border-radius: 0;
+        margin: 0 0 18px;
+        break-after: page;
+      }
+
+      .side-nav a {
+        color: var(--ink);
+        text-decoration: underline;
+      }
+
+      .print-only {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin: 0 0 12px;
+      }
+
+      .section,
+      .cover {
+        break-inside: avoid;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .doc-shell {
+        width: calc(100% - 20px);
+        margin: 10px auto;
+        grid-template-columns: 1fr;
+      }
+
+      .side-nav {
+        position: static;
+        max-height: none;
+      }
+
+      .cover,
+      .two-col,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cover-copy,
+      .section,
+      .footer {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .cover-visual {
+        padding: 0 24px 32px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="doc-shell">
+    <nav class="side-nav" aria-label="Document sections">
+      <p class="side-nav-title">Meridian Store OS</p>
+      <p class="side-nav-subtitle">Implementation response navigation</p>
+      <p class="print-only">Clickable contents page for the exported PDF.</p>
+      <a href="#cover">Overview</a>
+      <a href="#executive-summary">Executive Summary</a>
+      <div class="nav-group">
+        <a href="#b1">B1. Implementation Plan</a>
+        <a class="sub-link" href="#delivery-plan">Eight-Week Plan</a>
+        <a class="sub-link" href="#store-readiness">Store Readiness</a>
+        <a class="sub-link" href="#rollout-sequencing">Rollout Sequencing</a>
+        <a class="sub-link" href="#critical-integrations">Critical Integrations</a>
+      </div>
+      <div class="nav-group">
+        <a href="#b2">B2. Sizing and Reasoning</a>
+        <a class="sub-link" href="#ingestion-calculations">Ingestion Calculations</a>
+        <a class="sub-link" href="#cutover-options">Cutover Options</a>
+        <a class="sub-link" href="#resumable-ingestion">Resume Design</a>
+      </div>
+      <div class="nav-group">
+        <a href="#b3">B3. Architecture</a>
+        <a class="sub-link" href="#inventory-source">Inventory Source of Truth</a>
+        <a class="sub-link" href="#load-hotspot">Load Hotspot</a>
+      </div>
+      <div class="nav-group">
+        <a href="#b4">B4. Communication</a>
+        <a class="sub-link" href="#client-email">Client Email</a>
+        <a class="sub-link" href="#internal-escalation">Internal Escalation</a>
+      </div>
+      <div class="nav-group">
+        <a href="#b5">B5. Go-Live Scenario</a>
+        <a class="sub-link" href="#incident-timeline">Incident Timeline</a>
+        <a class="sub-link" href="#decision-matrix">Decision Matrix</a>
+      </div>
+    </nav>
+
+    <main class="page">
+    <section class="cover" id="cover">
+      <div class="cover-copy">
+        <p class="eyebrow">Fynd Store OS Case Study | Part B</p>
+        <h1>Meridian Lifestyle Implementation Plan</h1>
+        <p class="subtitle">
+          A practical eight-week rollout plan for migrating 107 India and UAE stores,
+          60,000 SKUs, and D2C operations from legacy POS and Shopify onto Store OS.
+        </p>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <strong>107 stores</strong>
+            <span>70 apparel, 25 footwear, 12 accessories</span>
+          </div>
+          <div class="meta-item">
+            <strong>60,000 SKUs</strong>
+            <span>Catalog migration with validation retry design</span>
+          </div>
+          <div class="meta-item">
+            <strong>8 weeks</strong>
+            <span>Festive season deadline</span>
+          </div>
+          <div class="meta-item">
+            <strong>Phased rollout</strong>
+            <span>Pilot first, then risk-based waves</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cover-visual" aria-label="Implementation overview image">
+        <svg viewBox="0 0 560 420" role="img" aria-labelledby="cover-title cover-desc">
+          <title id="cover-title">Store OS rollout overview</title>
+          <desc id="cover-desc">A stylized diagram showing brands, stores, catalog, and Store OS core.</desc>
+          <rect x="20" y="20" width="520" height="380" rx="18" fill="#f8fafc" stroke="#d8dee4"/>
+          <rect x="62" y="64" width="146" height="78" rx="10" fill="#0f766e"/>
+          <text x="135" y="96" fill="#fff" font-size="18" font-weight="700" text-anchor="middle">Apparel</text>
+          <text x="135" y="122" fill="#dff7f4" font-size="14" text-anchor="middle">70 stores</text>
+          <rect x="62" y="170" width="146" height="78" rx="10" fill="#2563eb"/>
+          <text x="135" y="202" fill="#fff" font-size="18" font-weight="700" text-anchor="middle">Footwear</text>
+          <text x="135" y="228" fill="#dbeafe" font-size="14" text-anchor="middle">25 stores</text>
+          <rect x="62" y="276" width="146" height="78" rx="10" fill="#b45309"/>
+          <text x="135" y="308" fill="#fff" font-size="18" font-weight="700" text-anchor="middle">Accessories</text>
+          <text x="135" y="334" fill="#ffedd5" font-size="14" text-anchor="middle">12 stores</text>
+
+          <rect x="316" y="78" width="166" height="222" rx="18" fill="#172026"/>
+          <text x="399" y="122" fill="#fff" font-size="22" font-weight="700" text-anchor="middle">Store OS</text>
+          <line x1="344" y1="148" x2="454" y2="148" stroke="#50616f"/>
+          <text x="399" y="182" fill="#cbd5e1" font-size="14" text-anchor="middle">Catalog</text>
+          <text x="399" y="213" fill="#cbd5e1" font-size="14" text-anchor="middle">POS + Payments</text>
+          <text x="399" y="244" fill="#cbd5e1" font-size="14" text-anchor="middle">Inventory + OMS</text>
+          <text x="399" y="275" fill="#cbd5e1" font-size="14" text-anchor="middle">D2C + Marketplaces</text>
+
+          <path d="M210 103 C260 103 267 103 314 139" fill="none" stroke="#0f766e" stroke-width="3"/>
+          <path d="M210 209 C263 209 267 205 314 192" fill="none" stroke="#2563eb" stroke-width="3"/>
+          <path d="M210 315 C260 315 268 285 314 239" fill="none" stroke="#b45309" stroke-width="3"/>
+          <circle cx="314" cy="139" r="5" fill="#0f766e"/>
+          <circle cx="314" cy="192" r="5" fill="#2563eb"/>
+          <circle cx="314" cy="239" r="5" fill="#b45309"/>
+
+          <rect x="314" y="326" width="170" height="42" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="399" y="352" fill="#172026" font-size="14" font-weight="700" text-anchor="middle">Festive-ready rollout</text>
+        </svg>
+      </div>
+    </section>
+
+    <section class="section" id="executive-summary">
+      <h2>Executive Summary</h2>
+      <p class="lead">
+        Meridian should be taken live through a controlled phased rollout, not a 107-store
+        big-bang. The plan protects the festive deadline by pre-loading and validating catalog
+        data early, proving store readiness before development completes, and expanding through
+        brand and country-aware waves.
+      </p>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <b>Recommendation</b>
+          <span>Run a pilot, then phased waves by operating model, country compliance, and store readiness.</span>
+        </div>
+        <div class="summary-card">
+          <b>Critical Path</b>
+          <span>Catalog, inventory, POS invoicing and tax, payments, OMS/D2C, and marketplace feeds.</span>
+        </div>
+        <div class="summary-card">
+          <b>Primary Risk</b>
+          <span>Catalog defects or hardware readiness gaps discovered too late for festive cutover.</span>
+        </div>
+        <div class="summary-card">
+          <b>Cutover Principle</b>
+          <span>Pre-load master data before go-live and use overnight windows for deltas and validation.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="b1">
+      <h2>B1. Implementation Plan and Rollout Sequencing</h2>
+      <p>
+        The lifecycle is intentionally front-loaded with discovery, store readiness, data quality,
+        and critical integration design. This reduces late-stage surprises and keeps the final
+        weeks focused on proving operations at scale.
+      </p>
+
+      <h3 id="delivery-plan">Eight-Week Delivery Plan</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 11%;">Week</th>
+            <th style="width: 22%;">Focus</th>
+            <th>What Happens</th>
+            <th style="width: 24%;">Key Outputs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>1</b></td>
+            <td>Kickoff, governance, discovery</td>
+            <td>Align scope, owners, success criteria, escalation path, and data requests. Start hardware and store-readiness checks immediately.</td>
+            <td>RAID log, project calendar, scope baseline, data request tracker.</td>
+          </tr>
+          <tr>
+            <td><b>2</b></td>
+            <td>Solution design and setup</td>
+            <td>Map store, ecommerce, return, refund, tax, promotion, and inventory flows. Configure sandbox and staging.</td>
+            <td>Integration map, process flows, environment setup, store configuration baseline.</td>
+          </tr>
+          <tr>
+            <td><b>3</b></td>
+            <td>Catalog and integration build</td>
+            <td>Run first catalog dry migration. Start POS, inventory, payment, OMS, D2C, and finance integration work.</td>
+            <td>Catalog rejection report, corrected mapping rules, build backlog.</td>
+          </tr>
+          <tr>
+            <td><b>4</b></td>
+            <td>End-to-end testing</td>
+            <td>Validate sale, invoice, payment, inventory decrement, online reservation, fulfillment, return, refund, and finance export.</td>
+            <td>E2E test evidence, defect list, performance baseline.</td>
+          </tr>
+          <tr>
+            <td><b>5</b></td>
+            <td>UAT and training</td>
+            <td>Business users and pilot stores test real scenarios. Train super users, area managers, and store leads.</td>
+            <td>UAT signoff, SOPs, training attendance, go-live checklist.</td>
+          </tr>
+          <tr>
+            <td><b>6</b></td>
+            <td>Pilot go-live</td>
+            <td>Launch a risk-representative pilot across brands, store types, and geography. Run daily incident triage.</td>
+            <td>Pilot stability report, fixes, wave readiness decision.</td>
+          </tr>
+          <tr>
+            <td><b>7</b></td>
+            <td>Scale rollout</td>
+            <td>Expand through apparel waves and prepare footwear/accessories using lessons from pilot.</td>
+            <td>Wave signoffs, delta migration reports, support readiness.</td>
+          </tr>
+          <tr>
+            <td><b>8</b></td>
+            <td>Final rollout and hypercare</td>
+            <td>Complete remaining stores, switch critical channels, reconcile data, and move into festive hypercare.</td>
+            <td>Go-live completion, reconciliation, hypercare dashboard.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="store-readiness">Hardware and Store-Readiness De-Risking</h3>
+      <div class="two-col">
+        <div>
+          <p>
+            Store readiness must be discovered before integration development is finished, because
+            local hardware and connectivity issues can block billing even when the platform is ready.
+          </p>
+          <div class="pill-row">
+            <span class="pill">POS device specs</span>
+            <span class="pill">Browser and OS versions</span>
+            <span class="pill">Receipt printer</span>
+            <span class="pill">Barcode scanner</span>
+            <span class="pill">Payment terminal</span>
+            <span class="pill">Internet and backup link</span>
+            <span class="pill">GST/VAT details</span>
+            <span class="pill">User roles</span>
+          </div>
+        </div>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Meaning</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b style="color: var(--ok);">Green</b></td>
+                <td>Ready with current setup.</td>
+                <td>Assign rollout wave.</td>
+              </tr>
+              <tr>
+                <td><b style="color: var(--accent-2);">Amber</b></td>
+                <td>Minor remediation needed.</td>
+                <td>Track closure before wave freeze.</td>
+              </tr>
+              <tr>
+                <td><b style="color: var(--danger);">Red</b></td>
+                <td>Hardware, network, or compliance blocker.</td>
+                <td>Exclude from wave until resolved.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <h3 id="rollout-sequencing">Rollout Sequencing</h3>
+      <p>
+        I would avoid a 107-store big-bang. The safer plan is a fast phased rollout with a
+        representative pilot, then brand and country-aware waves.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 14%;">Wave</th>
+            <th style="width: 14%;">Stores</th>
+            <th>Scope</th>
+            <th>Boundary Logic</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Pilot</b></td>
+            <td>7</td>
+            <td>4 apparel, 2 footwear, 1 accessories, including varied volume, format, hardware, and geography.</td>
+            <td>Expose real operating differences early rather than picking only easy stores.</td>
+          </tr>
+          <tr>
+            <td><b>Wave 1</b></td>
+            <td>30-35</td>
+            <td>Priority apparel stores.</td>
+            <td>Largest revenue footprint and similar catalog/workflow model.</td>
+          </tr>
+          <tr>
+            <td><b>Wave 2</b></td>
+            <td>35-40</td>
+            <td>Remaining apparel stores.</td>
+            <td>Scale after 2-3 stable trading days from Wave 1.</td>
+          </tr>
+          <tr>
+            <td><b>Wave 3</b></td>
+            <td>25</td>
+            <td>Footwear stores.</td>
+            <td>Different size curves, returns behavior, and category logic.</td>
+          </tr>
+          <tr>
+            <td><b>Wave 4</b></td>
+            <td>12</td>
+            <td>Accessories stores.</td>
+            <td>Smaller footprint and lower complexity, unless business priority changes.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <b>Wave principle:</b> cut by operational similarity, country compliance, store readiness,
+        hardware profile, payment provider, and revenue risk. If UAE VAT or payment behavior differs
+        materially, India and UAE should be separate sub-waves.
+      </div>
+
+      <h3 id="critical-integrations">Critical Path Integrations</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Integration</th>
+            <th>Why It Is Critical</th>
+            <th>Risk If Late</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Catalog migration</td>
+            <td>POS, inventory, ecommerce, tax, pricing, and reporting depend on clean product data.</td>
+            <td>Billing failures, listing errors, wrong tax, failed cutover.</td>
+          </tr>
+          <tr>
+            <td>Inventory sync</td>
+            <td>Store and online availability must stay aligned during festive demand.</td>
+            <td>Overselling, cancellations, reconciliation issues.</td>
+          </tr>
+          <tr>
+            <td>POS billing, invoicing, tax</td>
+            <td>Stores cannot trade without compliant invoices in India and UAE.</td>
+            <td>Operational and compliance blocker.</td>
+          </tr>
+          <tr>
+            <td>Payments</td>
+            <td>Terminals, refunds, reconciliation, and partial payments affect checkout completion.</td>
+            <td>Checkout delays and revenue leakage.</td>
+          </tr>
+          <tr>
+            <td>OMS and D2C</td>
+            <td>Online orders require reservation, routing, fulfillment, and cancellation handling.</td>
+            <td>Broken online promise and stock conflicts.</td>
+          </tr>
+          <tr>
+            <td>Marketplace connector</td>
+            <td>External dependencies, feed validation, rate limits, and certification cycles are common delays.</td>
+            <td>May need phase-two launch if not stable by week five.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="b2">
+      <h2>B2. Sizing and Analytical Reasoning</h2>
+      <p>
+        This section answers one practical question: can Meridian safely load 60,000 SKUs during
+        an overnight cutover? The API time itself is manageable, but the real risk is the time
+        needed to correct failed records and reconcile the load.
+      </p>
+
+      <h3 id="ingestion-calculations">Ingestion Calculations</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 24%;">Input</th>
+            <th>Value</th>
+            <th>Why It Matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Total catalog</td>
+            <td>60,000 SKUs</td>
+            <td>Every SKU must be created or updated on Store OS.</td>
+          </tr>
+          <tr>
+            <td>API speed</td>
+            <td>5 requests per second</td>
+            <td>Each request processes one product, so this controls the fastest possible load time.</td>
+          </tr>
+          <tr>
+            <td>First-pass failures</td>
+            <td>8%</td>
+            <td>Failed records need correction and one more API attempt.</td>
+          </tr>
+          <tr>
+            <td>Cutover window</td>
+            <td>About 8 hours</td>
+            <td>The full load, corrections, retry, and reconciliation must fit overnight.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>1. Clean Single-Threaded Load</h3>
+      <div class="calc">60,000 SKUs / 5 requests per second = 12,000 seconds
+12,000 seconds / 60 = 200 minutes
+200 minutes / 60 = 3.33 hours
+
+Clean load time = about 3 hours 20 minutes</div>
+      <p>
+        If every record is clean and the job runs continuously at 5 requests per second, the first
+        pass takes approximately <b>3 hours 20 minutes</b>.
+      </p>
+
+      <h3>2. Add the 8% Failure Retry</h3>
+      <div class="calc">Failed records = 60,000 x 8% = 4,800 SKUs
+Retry time = 4,800 / 5 requests per second = 960 seconds
+960 seconds / 60 = 16 minutes
+
+API time including retry = 3 hours 20 minutes + 16 minutes
+= 3 hours 36 minutes</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Assumption</th>
+            <th>Used in Estimate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>The API sustains 5 requests per second for the full run.</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Each request creates or updates one SKU.</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>8% fail only once, are corrected, and pass on the second attempt.</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Correction time is separate from API retry time.</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>No major API outage, network issue, or rate-limit slowdown occurs.</td>
+            <td>Yes</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Realistic End-to-End Estimate</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th style="width: 20%;">Time</th>
+            <th>Simple Explanation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Initial load</td>
+            <td>3h 20m</td>
+            <td>Send all 60,000 SKUs once.</td>
+          </tr>
+          <tr>
+            <td>Retry failed 8%</td>
+            <td>16m</td>
+            <td>Send the 4,800 corrected SKUs again.</td>
+          </tr>
+          <tr>
+            <td>Validation report and correction</td>
+            <td>1h-2h</td>
+            <td>Review failed records, fix data, and prepare retry file.</td>
+          </tr>
+          <tr>
+            <td>Reconciliation and buffer</td>
+            <td>1h-2h</td>
+            <td>Confirm counts, spot-check products, handle transient errors.</td>
+          </tr>
+          <tr>
+            <td><b>Total realistic estimate</b></td>
+            <td><b>5.5h-7.5h</b></td>
+            <td>Fits only if the catalog has already been dry-run before cutover.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="risk">
+        <b>Cutover answer:</b> the estimate can fit inside eight hours, but only with prior dry runs.
+        I would not do the first full validation during the final overnight cutover.
+      </div>
+
+      <h3 id="cutover-options">Options If the Window Does Not Fit</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Change</th>
+            <th>Why I Would Do It</th>
+            <th>Trade-Off / Risk</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Pre-load the catalog before cutover</b></td>
+            <td>Move the biggest job out of the overnight window and use cutover for final deltas.</td>
+            <td>Requires catalog freeze or strong delta tracking.</td>
+          </tr>
+          <tr>
+            <td><b>Run dry migrations earlier</b></td>
+            <td>Find and fix bad barcodes, tax codes, categories, and mandatory fields before go-live night.</td>
+            <td>Needs committed Meridian catalog owners.</td>
+          </tr>
+          <tr>
+            <td><b>Use approved bulk or parallel ingestion</b></td>
+            <td>Shorten the API processing time if Store OS allows it.</td>
+            <td>May hit platform limits or downstream load if not tested.</td>
+          </tr>
+          <tr>
+            <td><b>Split by brand</b></td>
+            <td>Load apparel, footwear, and accessories in line with rollout waves.</td>
+            <td>Needs clean brand isolation across D2C and marketplaces.</td>
+          </tr>
+          <tr>
+            <td><b>Use idempotent upsert</b></td>
+            <td>Safely load the same SKU again without creating duplicates.</td>
+            <td>Requires reconciliation of price, stock, and active status at cutover.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="resumable-ingestion">Crash-Resumable Ingestion Design</h3>
+      <div class="diagram">
+        <svg viewBox="0 0 980 250" role="img" aria-label="Crash-resumable ingestion mechanism">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c6873"/>
+            </marker>
+          </defs>
+          <rect x="18" y="74" width="138" height="76" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="87" y="106" text-anchor="middle" font-size="15" font-weight="700" fill="#172026">Source File</text>
+          <text x="87" y="130" text-anchor="middle" font-size="12" fill="#5c6873">SKU + hash</text>
+
+          <rect x="218" y="52" width="158" height="120" rx="8" fill="#fff" stroke="#0f766e" stroke-width="2"/>
+          <text x="297" y="84" text-anchor="middle" font-size="15" font-weight="700" fill="#172026">Ingestion Ledger</text>
+          <text x="297" y="110" text-anchor="middle" font-size="12" fill="#5c6873">pending / processing</text>
+          <text x="297" y="130" text-anchor="middle" font-size="12" fill="#5c6873">success / failed</text>
+          <text x="297" y="150" text-anchor="middle" font-size="12" fill="#5c6873">target product ID</text>
+
+          <rect x="440" y="74" width="150" height="76" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="515" y="106" text-anchor="middle" font-size="15" font-weight="700" fill="#172026">Worker</text>
+          <text x="515" y="130" text-anchor="middle" font-size="12" fill="#5c6873">skip success rows</text>
+
+          <rect x="654" y="74" width="142" height="76" rx="8" fill="#172026"/>
+          <text x="725" y="106" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Catalog API</text>
+          <text x="725" y="130" text-anchor="middle" font-size="12" fill="#cbd5e1">idempotent upsert</text>
+
+          <rect x="850" y="74" width="112" height="76" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="906" y="106" text-anchor="middle" font-size="15" font-weight="700" fill="#172026">Audit Log</text>
+          <text x="906" y="130" text-anchor="middle" font-size="12" fill="#5c6873">reconcile</text>
+
+          <path d="M156 112 L216 112" stroke="#5c6873" stroke-width="2" marker-end="url(#arrow)"/>
+          <path d="M376 112 L438 112" stroke="#5c6873" stroke-width="2" marker-end="url(#arrow)"/>
+          <path d="M590 112 L652 112" stroke="#5c6873" stroke-width="2" marker-end="url(#arrow)"/>
+          <path d="M796 112 L848 112" stroke="#5c6873" stroke-width="2" marker-end="url(#arrow)"/>
+          <path d="M515 152 C515 206 310 210 297 174" stroke="#0f766e" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+          <text x="408" y="217" text-anchor="middle" font-size="12" fill="#0f766e">On crash: restart from ledger where status != success</text>
+        </svg>
+      </div>
+
+      <p>
+        The ingestion job should behave like a checklist. Every SKU gets a stable external ID, such
+        as legacy SKU ID or brand plus barcode. The job stores the status of each SKU in an
+        ingestion ledger.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Ledger Field</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SKU external ID</td>
+            <td>Prevents duplicates by identifying the same product every time.</td>
+          </tr>
+          <tr>
+            <td>Source record hash</td>
+            <td>Shows whether the source data changed since the last successful load.</td>
+          </tr>
+          <tr>
+            <td>Status</td>
+            <td>Tracks pending, processing, success, failed, or skipped.</td>
+          </tr>
+          <tr>
+            <td>Target product ID</td>
+            <td>Stores the Store OS product ID after successful create or update.</td>
+          </tr>
+          <tr>
+            <td>Attempt count and last error</td>
+            <td>Helps retry failed records and report correction reasons.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <b>If the job crashes at 70%:</b> restart it and process only records where status is not
+        success, or where the source hash has changed. Successful unchanged SKUs are skipped, so
+        the job does not create duplicates or redo completed work.
+      </div>
+    </section>
+
+    <section class="section" id="b3">
+      <h2>B3. Architecture Articulation</h2>
+      <p>
+        In plain terms, Meridian's Store OS architecture has one central operating layer that connects
+        stores, online channels, payments, catalog, inventory, and the merchant's existing finance or
+        ERP systems. The goal is simple: every channel sells from the same trusted catalog and the
+        same real-time view of available stock.
+      </p>
+
+      <div class="diagram">
+        <svg viewBox="0 0 1080 560" role="img" aria-label="High-level Store OS architecture">
+          <defs>
+            <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c6873"/>
+            </marker>
+          </defs>
+          <text x="130" y="32" text-anchor="middle" font-size="13" font-weight="700" fill="#5c6873">Merchant Systems</text>
+          <rect x="32" y="52" width="196" height="78" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="130" y="84" text-anchor="middle" font-size="15" font-weight="700">Legacy POS</text>
+          <text x="130" y="108" text-anchor="middle" font-size="12" fill="#5c6873">historical sales, stores</text>
+
+          <rect x="32" y="154" width="196" height="78" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="130" y="186" text-anchor="middle" font-size="15" font-weight="700">ERP / Finance</text>
+          <text x="130" y="210" text-anchor="middle" font-size="12" fill="#5c6873">tax, accounting, ledgers</text>
+
+          <rect x="32" y="256" width="196" height="78" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="130" y="288" text-anchor="middle" font-size="15" font-weight="700">Warehouse / WMS</text>
+          <text x="130" y="312" text-anchor="middle" font-size="12" fill="#5c6873">warehouse stock movement</text>
+
+          <rect x="32" y="358" width="196" height="78" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="130" y="390" text-anchor="middle" font-size="15" font-weight="700">Shopify Data</text>
+          <text x="130" y="414" text-anchor="middle" font-size="12" fill="#5c6873">D2C catalog and orders</text>
+
+          <rect x="292" y="196" width="178" height="96" rx="8" fill="#fff" stroke="#0f766e" stroke-width="2"/>
+          <text x="381" y="231" text-anchor="middle" font-size="16" font-weight="700">Integration Layer</text>
+          <text x="381" y="255" text-anchor="middle" font-size="12" fill="#5c6873">mapping, retries, audit</text>
+          <text x="381" y="275" text-anchor="middle" font-size="12" fill="#5c6873">APIs and webhooks</text>
+
+          <rect x="536" y="76" width="264" height="330" rx="16" fill="#172026"/>
+          <text x="668" y="118" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">Store OS Core</text>
+          <rect x="568" y="148" width="92" height="48" rx="7" fill="#263746"/>
+          <text x="614" y="177" text-anchor="middle" font-size="13" fill="#fff">Catalog</text>
+          <rect x="676" y="148" width="92" height="48" rx="7" fill="#263746"/>
+          <text x="722" y="177" text-anchor="middle" font-size="13" fill="#fff">Pricing</text>
+          <rect x="568" y="214" width="92" height="48" rx="7" fill="#0f766e"/>
+          <text x="614" y="243" text-anchor="middle" font-size="13" fill="#fff">Inventory</text>
+          <rect x="676" y="214" width="92" height="48" rx="7" fill="#263746"/>
+          <text x="722" y="243" text-anchor="middle" font-size="13" fill="#fff">OMS</text>
+          <rect x="568" y="280" width="92" height="48" rx="7" fill="#263746"/>
+          <text x="614" y="309" text-anchor="middle" font-size="13" fill="#fff">POS</text>
+          <rect x="676" y="280" width="92" height="48" rx="7" fill="#263746"/>
+          <text x="722" y="309" text-anchor="middle" font-size="13" fill="#fff">Users</text>
+          <rect x="590" y="348" width="156" height="34" rx="7" fill="#33475b"/>
+          <text x="668" y="370" text-anchor="middle" font-size="12" fill="#fff">Operational stock truth</text>
+
+          <text x="948" y="32" text-anchor="middle" font-size="13" font-weight="700" fill="#5c6873">Selling Channels</text>
+          <rect x="860" y="52" width="176" height="78" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="948" y="84" text-anchor="middle" font-size="15" font-weight="700">Store POS</text>
+          <text x="948" y="108" text-anchor="middle" font-size="12" fill="#5c6873">sales, returns, invoices</text>
+
+          <rect x="860" y="154" width="176" height="78" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="948" y="186" text-anchor="middle" font-size="15" font-weight="700">Payments</text>
+          <text x="948" y="210" text-anchor="middle" font-size="12" fill="#5c6873">cards, UPI, refunds</text>
+
+          <rect x="860" y="256" width="176" height="78" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="948" y="288" text-anchor="middle" font-size="15" font-weight="700">D2C Storefront</text>
+          <text x="948" y="312" text-anchor="middle" font-size="12" fill="#5c6873">orders, reservations</text>
+
+          <rect x="860" y="358" width="176" height="78" rx="8" fill="#eef3f7" stroke="#d8dee4"/>
+          <text x="948" y="390" text-anchor="middle" font-size="15" font-weight="700">Marketplaces</text>
+          <text x="948" y="414" text-anchor="middle" font-size="12" fill="#5c6873">feeds, orders, stock</text>
+
+          <rect x="292" y="448" width="508" height="58" rx="8" fill="#fff7ed" stroke="#fed7aa"/>
+          <text x="546" y="472" text-anchor="middle" font-size="14" font-weight="700" fill="#7c2d12">Event stream and monitoring</text>
+          <text x="546" y="493" text-anchor="middle" font-size="12" fill="#7c2d12">inventory updates, order events, failures, retries, queue depth, sync lag</text>
+
+          <path d="M228 91 C260 91 258 216 292 224" stroke="#5c6873" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+          <path d="M228 193 L290 226" stroke="#5c6873" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+          <path d="M228 295 C262 295 260 268 292 260" stroke="#5c6873" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+          <path d="M228 397 C260 397 258 276 292 266" stroke="#5c6873" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+          <path d="M470 244 L534 244" stroke="#5c6873" stroke-width="2" marker-end="url(#arrow2)"/>
+
+          <path d="M800 172 C836 144 826 91 858 91" stroke="#5c6873" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+          <path d="M858 193 C828 193 832 214 800 224" stroke="#5c6873" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+          <path d="M800 238 C836 250 826 295 858 295" stroke="#5c6873" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+          <path d="M800 258 C838 292 822 397 858 397" stroke="#5c6873" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+          <path d="M668 406 L668 446" stroke="#b45309" stroke-width="2" marker-end="url(#arrow2)"/>
+        </svg>
+      </div>
+
+      <h3>Major Components and Data Flow</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 22%;">Component</th>
+            <th>Role in the Implementation</th>
+            <th>How It Connects</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Catalog</td>
+            <td>Stores SKU, barcode, brand, size, color, category, price, tax, image, and channel eligibility data.</td>
+            <td>Loaded from legacy/Shopify/ERP through the integration layer, then published to POS, D2C, and marketplaces.</td>
+          </tr>
+          <tr>
+            <td>POS</td>
+            <td>Runs store billing, returns, exchanges, invoices, and store user workflows.</td>
+            <td>Uses Store OS catalog, price, tax, payment, and inventory services in real time.</td>
+          </tr>
+          <tr>
+            <td>OMS</td>
+            <td>Receives online and marketplace orders, reserves stock, routes fulfillment, and handles cancellations/returns.</td>
+            <td>Consumes channel orders and updates inventory reservations and fulfillment status.</td>
+          </tr>
+          <tr>
+            <td>Inventory</td>
+            <td>Maintains sellable, reserved, damaged, returned, and in-transit stock by store and warehouse.</td>
+            <td>Receives stock movements from POS, OMS, warehouse, and returns; publishes available stock to online channels.</td>
+          </tr>
+          <tr>
+            <td>Merchant systems</td>
+            <td>Legacy POS, ERP/finance, WMS, and Shopify provide starting data and may remain systems of record for finance or planning.</td>
+            <td>Connected through APIs, file imports, webhooks, or scheduled exports depending on system capability.</td>
+          </tr>
+          <tr>
+            <td>Payments</td>
+            <td>Handles card, UPI, wallet, cash, refunds, and reconciliation flows.</td>
+            <td>POS initiates payment and stores transaction references for invoice and finance reconciliation.</td>
+          </tr>
+          <tr>
+            <td>D2C / marketplaces</td>
+            <td>Customer-facing channels for online orders and product discovery.</td>
+            <td>Receive catalog and stock availability from Store OS; send orders back into OMS.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="inventory-source">Inventory Source of Truth</h3>
+      <p>
+        After go-live, Store OS inventory should be the operational source of truth for sellable
+        stock. ERP can remain the financial or planning system, but Store OS should be the system
+        that decides whether an item is available to sell in a store, on D2C, or on marketplaces.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Inventory Behavior</th>
+            <th>Channel Sync</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Store sale</td>
+            <td>POS creates invoice and Store OS decrements stock for that store.</td>
+            <td>Updated availability is pushed to D2C and marketplaces.</td>
+          </tr>
+          <tr>
+            <td>Online order</td>
+            <td>OMS reserves stock immediately so stores and other channels cannot oversell it.</td>
+            <td>Available-to-promise reduces across online and offline channels.</td>
+          </tr>
+          <tr>
+            <td>Cancellation</td>
+            <td>Reserved stock is released back to sellable inventory.</td>
+            <td>Availability is republished to eligible channels.</td>
+          </tr>
+          <tr>
+            <td>Return</td>
+            <td>Stock is added back only after return acceptance and quality status.</td>
+            <td>Sellable quantity updates only if the returned item is approved for resale.</td>
+          </tr>
+          <tr>
+            <td>Warehouse or store transfer</td>
+            <td>Stock moves through in-transit status until received at destination.</td>
+            <td>Only received sellable stock becomes available to channels.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 id="load-hotspot">Expected Load Hotspot</h3>
+      <p>
+        The most likely scale issue at 107 stores is inventory event latency during peak festive
+        trading. Store invoices, online orders, returns, cancellations, and marketplace reservations
+        can all hit inventory at the same time. If processing falls behind, online and offline stock
+        can drift apart.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Risk</th>
+            <th>What I Would Monitor</th>
+            <th>Alert Threshold Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Inventory updates lag behind store billing and online reservations.</td>
+            <td>Inventory queue depth, p95/p99 processing latency, failed events, dead-letter count, API rate-limit responses, stock sync lag by channel, oversell/cancellation rate.</td>
+            <td>Warning if p95 inventory latency exceeds 60 seconds; critical if it exceeds 180 seconds or failed inventory events exceed 0.5% over 15 minutes.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        Client-facing explanation: Store OS keeps stock consistent by treating every sale,
+        reservation, cancellation, return, and transfer as an inventory event. Engineering-facing
+        explanation: the inventory event pipeline must be observable, retryable, idempotent, and
+        protected by alerts before the festive rollout.
+      </div>
+    </section>
+
+    <section class="section" id="b4">
+      <h2>B4. Stakeholder Communication</h2>
+      <p class="lead">
+        These are written as messages I would actually send: one external week-one update to the
+        project sponsor, and one internal escalation when a marketplace dependency threatens cutover.
+      </p>
+
+      <div class="message" id="client-email">
+        <div class="label">Client Email | End of Week One</div>
+        <p><b>Subject:</b> Meridian x Store OS: Week 1 status and festive go-live readiness</p>
+        <p>Hi [Sponsor Name],</p>
+        <p>
+          Thank you for the strong start in week one. We have completed kickoff, confirmed the
+          eight-week festive go-live target, and started discovery across stores, catalog, inventory,
+          payments, Shopify/D2C, and finance flows.
+        </p>
+        <p>
+          Based on the current plan, our target is still achievable if we hold the following
+          timeline: solution design and environment setup in week two, catalog dry run and
+          integration build from week three, end-to-end testing in week four, UAT and training in
+          week five, pilot in week six, phased store rollout in weeks seven and eight, followed by
+          hypercare through the festive period.
+        </p>
+        <p>
+          The main risk to the festive go-live is catalog readiness. With approximately 60,000 SKUs,
+          missing mandatory attributes, duplicate barcodes, incorrect tax codes, or category mapping
+          gaps can directly impact POS billing, ecommerce listing, and inventory sync. To keep the
+          timeline protected, we need Meridian to share the first complete catalog extract by
+          [date] and nominate owners who can resolve validation failures within 24 hours of each
+          dry run.
+        </p>
+        <p>
+          We are on track at the end of week one, but the next checkpoint is important: by the end
+          of week two we should have store readiness, catalog ownership, and integration scope
+          confirmed so we can move into build and testing without compressing UAT.
+        </p>
+        <p>Regards,<br>[Your Name]<br>Implementation Manager, Store OS</p>
+      </div>
+
+      <div class="message" id="internal-escalation">
+        <div class="label">Internal Escalation | Marketplace Integration Slipping</div>
+        <p><b>Channel:</b> Slack to [Engineering Lead]</p>
+        <p>Hi [Engineering Lead],</p>
+        <p>
+          Escalating Meridian's marketplace integration. We are now 3-4 days behind because feed
+          validation and inventory availability mapping are not resolved. If this is not stable by
+          end of week five, it will threaten the week-seven cutover and force us to either remove
+          marketplace from launch scope or delay the affected rollout wave.
+        </p>
+        <p><b>Specific ask:</b> please assign one backend engineer full-time for the next three days to close:</p>
+        <ul>
+          <li>Feed validation failures</li>
+          <li>Inventory availability payload mapping</li>
+          <li>Order webhook retry behavior</li>
+          <li>Rate-limit handling and dead-letter visibility</li>
+        </ul>
+        <p>
+          I need an owner and revised ETA by EOD today. If we cannot commit to a stable connector
+          by [date], I will recommend moving marketplace launch to phase two and keeping POS, D2C,
+          inventory, and store rollout on the festive path.
+        </p>
+        <p>Thanks,<br>[Your Name]</p>
+      </div>
+    </section>
+
+    <section class="section" id="b5">
+      <h2>B5. Go-Live Day Scenario</h2>
+      <p>
+        At 11 PM, invoices are generating but inventory is not decrementing for one product category.
+        Forty stores are scheduled to open at 6 AM. I would treat this as a go-live incident with a
+        hard decision point no later than 3:30-4:00 AM.
+      </p>
+
+      <h3 id="incident-timeline">Incident Timeline</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 18%;">Timeframe</th>
+            <th>What We Do</th>
+            <th>What We Need to Know</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>First 15 minutes</td>
+            <td>Start the incident bridge, pause non-essential changes, and get real examples from stores.</td>
+            <td>Which stores, SKUs, invoices, and timestamps are affected?</td>
+          </tr>
+          <tr>
+            <td>Next 45 minutes</td>
+            <td>Compare the failing product category with a category that is working correctly.</td>
+            <td>Is the issue caused by product setup, category mapping, stock rules, or inventory event processing?</td>
+          </tr>
+          <tr>
+            <td>By 2:00 AM</td>
+            <td>Measure the business impact and decide whether a temporary workaround is practical.</td>
+            <td>How important is this category, and can stores safely sell without automatic stock decrement?</td>
+          </tr>
+          <tr>
+            <td>By 3:30-4:00 AM</td>
+            <td>Make the go/no-go decision with Meridian's sponsor and Store OS leadership.</td>
+            <td>Do we proceed, proceed with restrictions, or keep stores on the fallback plan?</td>
+          </tr>
+          <tr>
+            <td>Before 6:00 AM</td>
+            <td>Send one clear instruction to all stores and correct any stock already impacted.</td>
+            <td>Every store knows exactly which system to use and what to do at opening.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <b>Simple rule:</b> by 4:00 AM, stores should have one clear instruction: go live as planned,
+        go live with a controlled restriction, or stay on the fallback system for the day.
+      </div>
+
+      <h3 id="decision-matrix">Decision Matrix</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Condition</th>
+            <th>Decision</th>
+            <th>Rationale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Root cause is identified, fixed, and regression-tested across sale, return, inventory, and online sync.</td>
+            <td><b style="color: var(--ok);">Proceed</b></td>
+            <td>Operational risk is controlled before store opening.</td>
+          </tr>
+          <tr>
+            <td>Issue is isolated to one non-material category and can be blocked or manually controlled.</td>
+            <td><b style="color: var(--accent-2);">Partial proceed</b></td>
+            <td>Business can trade with explicit workaround and reconciliation plan.</td>
+          </tr>
+          <tr>
+            <td>Root cause is unknown, category is material, or inventory decrement is unreliable beyond one category.</td>
+            <td><b style="color: var(--danger);">Delay / rollback</b></td>
+            <td>Opening 40 stores with unreliable inventory creates oversell and reconciliation risk.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="critical">
+        <b>Likely decision:</b> if the issue is truly category-specific and a tested fix or controlled
+        block is ready before the decision checkpoint, proceed partially with written business signoff.
+        If root cause remains unknown by cutoff, delay the wave and keep stores on legacy for that
+        trading day.
+      </div>
+    </section>
+
+  </main>
+  </div>
+</body>
+</html>
